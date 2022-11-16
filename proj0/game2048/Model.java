@@ -117,8 +117,34 @@ public class Model extends Observable {
      */
     public void tilt(Side side) {
         // TODO: Fill in this function.
-
+        _board.setViewingPerspective(side);
+        boolean[][] isMerged = new boolean[size()][size()];
+        for (int row = size()-2; row >= 0; row--)
+            for (int col = 0; col < size(); col++) {
+                var tile = _board.tile(col, row);
+                if (tile != null)
+                    move(col, row, tile, isMerged);
+            }
+        _board.setViewingPerspective(Side.NORTH);
         checkGameOver();
+    }
+
+    private void move(int col, int row, Tile tile, boolean[][] isMerged) {
+        int step = 0;
+        for (int i = row + 1; i < size(); i++) {
+            var adjacent = _board.tile(col, i);
+            if (adjacent == null) {
+                step += 1;
+            } else if (adjacent.value() == tile.value() && !isMerged[col][i]) {
+                step += 1;
+            } else {
+                break;
+            }
+        }
+        if (_board.move(col, row + step, tile)) {
+            _score += tile.next().value();
+            isMerged[col][row+step] = true;
+        }
     }
 
     /** Checks if the game is over and sets the gameOver variable
