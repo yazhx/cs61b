@@ -69,6 +69,7 @@ public class LinkedListDeque <T>{
         node.next.pre = sentinel;
         node.pre = null;
         node.next = null;
+        size -= 1;
         return node.item;
     }
 
@@ -81,6 +82,7 @@ public class LinkedListDeque <T>{
         node.pre.next = sentinel;
         node.pre = null;
         node.next = null;
+        size -= 1;
         return node.item;
     }
 
@@ -97,10 +99,9 @@ public class LinkedListDeque <T>{
     }
 
     public boolean equals(Object o) {
-        if (!(o instanceof LinkedListDeque<?>))
+        if (!(o instanceof LinkedListDeque<?> other))
             return false;
 
-        LinkedListDeque<?> other = (LinkedListDeque<?>) o;
         if (size != other.size())
             return false;
 
