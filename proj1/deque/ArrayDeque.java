@@ -2,37 +2,49 @@ package deque;
 
 public class ArrayDeque <T>{
     private int size;
-    private int first;
-    private int last;
+    private int front;
+    private int rear;
     private T[] items;
     private final int FACTOR = 2;
 
     public ArrayDeque() {
         this.size = 0;
-        this.first = 0;
-        this.last = 0;
+        this.front = 0;
+        this.rear = 0;
         this.items = (T[]) new Object[8];
     }
 
     public void addFirst(T item) {
         if (isFull())
-            resize(size * FACTOR);
+            resize(items.length * FACTOR);
 
+        front = (front + items.length - 1) % items.length;
+        items[front] = item;
         size += 1;
-        first = (first + (items.length - 1)) % items.length;
-        items[first] = item;
     }
 
     public void addLast(T item) {
+        /**
+         * 循环队列首尾相接，当队头指针front和队尾指针rear进到length-1后，再前进一个位置就自动到0。
+         * (1)队头指针进1：front = (front + 1) % length
+         * (2)队尾指针进1：rear = (rear + 1) % length
+         *
+         * 队尾插入新元素和删除队头元素时，两个指针都按顺时针方向进1；
+         * 队头插入新元素和删除队尾元素时，两个指针都按逆时针方向减1；(front + (length - 1)) % length
+         *
+         * 队空条件：front == rear（或使用size==0判断）
+         * 队满条件：(rear + 1) % length == front 时队满
+         */
         if (isFull())
-            resize(size * FACTOR);
+            resize(items.length * FACTOR);
 
-        items[last++] = item;
+        items[rear] = item;
         size += 1;
+        rear = (rear + 1) % items.length;
     }
 
     private boolean isFull() {
-        return size == items.length;
+        return (rear + 1) % items.length == front;
     }
 
     private void resize(int capacity) {
@@ -42,11 +54,12 @@ public class ArrayDeque <T>{
             newItems[i] = items[index];
         }
         items = newItems;
-        first = 0;
+        front = 0;
+        rear = size;
     }
 
-    private int getIndex(int i) {
-        return (first + i) % items.length;
+    private int getIndex(int index) {
+        return (front + index) % items.length;
     }
 
     public boolean isEmpty() {
@@ -66,22 +79,33 @@ public class ArrayDeque <T>{
         }
         sb.append("\n");
         System.out.println(sb.toString());
+//        return sb.toString();
     }
 
     public T removeFirst() {
         if (underUsage())
             resize((int) (items.length * 0.5));
 
+        if (isEmpty())
+            return null;
+
+        T item = items[front];
         size -= 1;
-        return items[first++];
+        front = (front + 1) % items.length;
+        return item;
     }
 
     public T removeLast() {
         if (underUsage())
             resize((int) (items.length * 0.5));
 
+        if (isEmpty())
+            return null;
+
+        rear = (rear + items.length - 1) % items.length;
+        T item= items[rear];
         size -= 1;
-        return items[--last];
+        return item;
     }
 
     private boolean underUsage() {
