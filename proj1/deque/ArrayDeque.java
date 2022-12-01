@@ -1,6 +1,8 @@
 package deque;
 
-public class ArrayDeque <T>{
+import org.junit.Test;
+
+public class ArrayDeque<T> implements Deque<T>{
     private int size;
     private int front;
     private int rear;
@@ -14,6 +16,18 @@ public class ArrayDeque <T>{
         this.items = (T[]) new Object[8];
     }
 
+    /**
+     * 循环队列首尾相接，当队头指针front和队尾指针rear进到length-1后，再前进一个位置就自动到0。
+     * (1)队头指针进1：front = (front + 1) % length
+     * (2)队尾指针进1：rear = (rear + 1) % length
+     *
+     * 队尾插入新元素和删除队头元素时，两个指针都按顺时针方向进1；
+     * 队头插入新元素和删除队尾元素时，两个指针都按逆时针方向减1；(front + (length - 1)) % length
+     *
+     * 队空条件：front == rear（或使用size==0判断）
+     * 队满条件：(rear + 1) % length == front 时队满
+     */
+    @Override
     public void addFirst(T item) {
         if (isFull())
             resize(items.length * FACTOR);
@@ -23,18 +37,8 @@ public class ArrayDeque <T>{
         size += 1;
     }
 
+    @Override
     public void addLast(T item) {
-        /**
-         * 循环队列首尾相接，当队头指针front和队尾指针rear进到length-1后，再前进一个位置就自动到0。
-         * (1)队头指针进1：front = (front + 1) % length
-         * (2)队尾指针进1：rear = (rear + 1) % length
-         *
-         * 队尾插入新元素和删除队头元素时，两个指针都按顺时针方向进1；
-         * 队头插入新元素和删除队尾元素时，两个指针都按逆时针方向减1；(front + (length - 1)) % length
-         *
-         * 队空条件：front == rear（或使用size==0判断）
-         * 队满条件：(rear + 1) % length == front 时队满
-         */
         if (isFull())
             resize(items.length * FACTOR);
 
@@ -62,10 +66,7 @@ public class ArrayDeque <T>{
         return (front + index) % items.length;
     }
 
-    public boolean isEmpty() {
-        return size == 0;
-    }
-
+    @Override
     public int size() {
         return size;
     }
@@ -82,6 +83,7 @@ public class ArrayDeque <T>{
 //        return sb.toString();
     }
 
+    @Override
     public T removeFirst() {
         if (underUsage())
             resize((int) (items.length * 0.5));
@@ -95,6 +97,7 @@ public class ArrayDeque <T>{
         return item;
     }
 
+    @Override
     public T removeLast() {
         if (underUsage())
             resize((int) (items.length * 0.5));
@@ -113,6 +116,7 @@ public class ArrayDeque <T>{
         return (items.length >= 16) && (usage < 0.25);
     }
 
+    @Override
     public T get(int index) {
         if (index >= size)
             return null;
