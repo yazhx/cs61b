@@ -1,6 +1,9 @@
 package deque;
 
 import org.junit.Test;
+
+import java.util.Iterator;
+
 import static org.junit.Assert.*;
 
 public class ArrayDequeTest {
@@ -47,8 +50,8 @@ public class ArrayDequeTest {
         ad.addLast("world~");
         ad.addLast("navigate");
 
-       assertEquals("hello", ad.removeFirst());
-       assertEquals("navigate", ad.removeLast());
+        assertEquals("hello", ad.removeFirst());
+        assertEquals("navigate", ad.removeLast());
 
 //        ad.removeLast();
 //        ad.removeLast();
@@ -64,5 +67,18 @@ public class ArrayDequeTest {
         }
         assertEquals(109, ad2.removeLast().intValue());
         assertEquals(108, ad2.get(8).intValue());
+    }
+
+    @Test
+    public void iterableTest() {
+        ArrayDeque<String> ad = new ArrayDeque<>();
+        ad.addLast("hello");
+        ad.addLast("hell");
+        ad.addLast("world~");
+        ad.addLast("navigate");
+
+        for (String item : ad) {
+            System.out.println(item);
+        }
     }
 }
