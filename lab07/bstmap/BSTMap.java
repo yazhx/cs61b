@@ -1,5 +1,8 @@
 package bstmap;
 
+import edu.princeton.cs.algs4.BST;
+
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -23,14 +26,17 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V>{
         }
     }
     private BSTNode root;
+    private HashSet<K> set;
 
     public BSTMap() {
         root = null;
+        set = new HashSet<>();
     }
 
     @Override
     public void clear() {
         root = null;
+        set.clear();
     }
 
     @Override
@@ -76,6 +82,7 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V>{
 
     private BSTNode put(BSTNode x, K key, V value) {
         if (x == null) {
+            set.add(key);
             return new BSTNode(key, value, 1);
         }
 
@@ -108,18 +115,7 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V>{
 
     @Override
     public Set<K> keySet() {
-        Set<K> set = new HashSet<>();
-        keySet(root, set);
         return set;
-    }
-
-    private void keySet(BSTNode x, Set<K> set) {
-        if (x == null)
-            return;
-
-        keySet(x.left, set);
-        set.add(x.k);
-        keySet(x.right, set);
     }
 
     @Override
@@ -156,15 +152,34 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V>{
             x = min(t.right);
             x.right = deleteMin(t.right);
             x.left = t.left;
+            set.remove(t.k);
         }
         x.N = size(x.left) + size(x.right) + 1;
         return x;
     }
 
+    public BSTNode min() {
+        return min(root);
+    }
+
     private BSTNode min(BSTNode x) {
         if (x == null)
             return null;
+        if (x.left == null)
+            return x;
         return min(x.left);
+    }
+
+    public BSTNode max() {
+        return max(root);
+    }
+
+    private BSTNode max(BSTNode x) {
+        if (x == null)
+            return null;
+        if (x.right == null)
+            return x;
+        return max(x.right);
     }
 
     private BSTNode deleteMin(BSTNode x) {
@@ -177,19 +192,7 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V>{
 
     @Override
     public Iterator<K> iterator() {
-        return new BSTMapIterator<>();
+        return set.iterator();
     }
 
-    private class BSTMapIterator<K> implements Iterator<K>{
-
-        @Override
-        public boolean hasNext() {
-            return false;
-        }
-
-        @Override
-        public K next() {
-            return null;
-        }
-    }
 }
